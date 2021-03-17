@@ -1,4 +1,4 @@
-# ds
+# demo
 
 ## Project setup
 ```

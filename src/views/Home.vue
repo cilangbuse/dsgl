@@ -1,82 +1,152 @@
 <template>
-  <div>
-    <el-row class="tac">
-      <div class="bt">电商管理系统</div>
-      <el-col :span="12">
+  <div class="homebox">
+    <div class="home_top">
+      <div class="box1">
+        <span>电商后台管理系统</span>
+        <button @click="logout" type="info">退出</button>
+      </div>
+    </div>
+    <div class="home_center">
+      <!-- 导航 -->
+      <el-aside :width="iscollapse ? '64px' : '200px'">
+        <div class="home_left_top" @click="toggleCollapse">|||</div>
         <el-menu
-          default-active="2"
-          class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
-          background-color="#545c64"
+          background-color="#333744"
           text-color="#fff"
-          active-text-color="#ffd04b"
+          active-text-color="#409EFF"
+          unique-opened
+          :collapse="iscollapse"
+          :collapse-transition="false"
+          router
         >
-          <el-submenu index="1">
+          <el-submenu :index="item.id+''" v-for="item in list" :key="item.id">
             <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>导航一</span>
+              <i :class="icon[item.id+'']"></i> 
+              <span>{{item.authName}}</span>
             </template>
-            <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="1-1">选项1</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="1-3">选项3</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="1-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="1-4-1">选项1</el-menu-item>
-            </el-submenu>
+            <!-- 二级菜单 -->
+            <el-menu-item 
+            :index="'/home/'+ite.path" 
+            v-for="ite in item.children" 
+            :key="ite.id">
+              <template slot="title">
+                <i class="el-icon-menu"></i>
+                <span>{{ite.authName}}</span>
+              </template></el-menu-item>
           </el-submenu>
-          <el-menu-item index="2">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3">
-            <i class="el-icon-setting"></i>
-            <span slot="title">导航三</span>
-          </el-menu-item>
         </el-menu>
-      </el-col>
-    </el-row>
+      </el-aside>
+
+      <div class="home_right">
+        <router-view></router-view>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: {},
   data() {
     return {
-      list: [],
+      list: "",
+      icon: {
+        "125": "el-icon-s-custom",
+        "103": "el-icon-s-tools",
+        "101": "el-icon-s-goods",
+        "102": "el-icon-s-order",
+        "145": "el-icon-data-line",
+      },
+      iscollapse: false,
+      uniqueopened: true,
     };
   },
-  mounted() {
-    this.axios.get("/api/sliderbar").then((res) => {
-      console.log(res);
-      this.list = res.list;
-    });
-  },
   methods: {
+    logout() {
+      window.sessionStorage.clear();
+      this.$router.push("/login");
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
     },
+    toggleCollapse() {
+      this.iscollapse = !this.iscollapse;
+    },
   },
-  components: {},
+  created() {
+    this.axios.get("/api/menus").then((res) => {
+      console.log(res.data);
+      this.list = res.data;
+    });
+  },
 };
 </script>
 
-<style scoped lang="less">
-.el-col-12 {
-  width: 200px;
+<style lang="less" scoped>
+* {
+  padding: 0;
+  margin: 0;
 }
-.bt {
-  background-color: #545c64;
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+.homebox{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.home_top {
+  width: 100%;
   height: 60px;
+  background: #373d41;
   line-height: 60px;
-  color: white;
+  .box1 {
+    width: 100%;
+    font-size: 20px;
+    margin-left: 10px;
+    color: #ccc;
+    button {
+      float: right;
+      padding: 10px 20px;
+      margin-top: 10px;
+      margin-right: 50px;
+    }
+  }
+}
+.home_center {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  .home_left_top {
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .back {
+    width: 199px;
+  }
+  .home_right {
+    flex: 1;
+    background: #eaedf1;
+    padding-top: 15px;
+    padding-left: 15px;
+  }
+}
+.el-menu-vertical-demo {
+  width: 99.9999%;
+}
+.el-menu {
+  border: none;
+}
+.el-aside {
+  background-color: #333744;
 }
 </style>

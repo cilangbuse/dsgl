@@ -1,12 +1,13 @@
 module.exports = {
-    devServer: {
-        proxy: {
-            '/api': {
-                target: 'http://192.168.1.30:8888/api/private/v1/',
-                pathRewrite: {
-                    '^/api': ''
-                },
-            },
-        }
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.30:8888/api/private/v1/',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite:{'^/api':''}
+      },
+     
     }
+  }
 }
